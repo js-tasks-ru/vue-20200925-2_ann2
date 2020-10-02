@@ -11,9 +11,9 @@ const MEETUP_ID = 6;
  * @param meetup - объект с описанием митапа (и параметром meetupId)
  * @return {string} - ссылка на изображение митапа
  */
-function getMeetupCoverLink(meetup) {
+/*function getMeetupCoverLink(meetup) {
   return `${API_URL}/images/${meetup.imageId}`;
-}
+}*/
 
 /**
  * Словарь заголовков по умолчанию для всех типов элементов программы
@@ -48,19 +48,42 @@ export const app = new Vue({
   el: '#app',
 
   data: {
-    //
+    agendaItemIcons,
+    agendaItemTitles,
+    meetupItem: null,
   },
 
   mounted() {
     // Требуется получить данные митапа с API
+    this.fetchMeetups();
   },
-
   computed: {
-    //
+    //почему-то,если тут что-то есть, выводится белый экран
   },
 
   methods: {
     // Получение данных с API предпочтительнее оформить отдельным методом,
     // а не писать прямо в mounted()
+
+    getDataMeetup() {
+    return fetch(`${API_URL}/meetups/${MEETUP_ID}`, {method: 'GET' })
+      .then(response => response.json())
+    },
+    async fetchMeetups() {
+      this.meetupItem = await this.getDataMeetup();
+    },
+    getMeetupCoverLink(meetup) {
+      return `${API_URL}/images/${meetup.imageId}`;
+    },
+    localDate(date) {
+      return new Date(date).toLocaleString(navigator.language, {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+    },
+    stringDate(date) {
+      return new Date(date).toISOString().substr(0, 10);
+    },
   },
 });
