@@ -4,7 +4,7 @@ import { MEETUP_ID, fetchMeetup } from './data.js';
 export const MeetupPage = {
   name: 'MeetupPage',
 
-  template: `<div id="app" v-if="meetup">
+  template: `<div id="app">
                 <meetup-view :meetup="meetup"></meetup-view>
              </div>`,
   components: {
@@ -15,7 +15,6 @@ export const MeetupPage = {
   data() {
     return {
       meetup: null,
-      //meetupLink: '',
     }
   },
 
@@ -26,7 +25,6 @@ export const MeetupPage = {
   // methods
   methods: {
     async getMeetup() {
-      console.log(await fetchMeetup(MEETUP_ID));
       this.meetup = await fetchMeetup(MEETUP_ID);
     },
   }

@@ -1,5 +1,5 @@
 export const MeetupCover = {
-  template: `<div class="meetup-cover" :style="link ? \`--bg-url: url('\${link}')\`: 'https://course-vue.javascript.ru/api/images/2'">
+  template: `<div class="meetup-cover" :style="link ? \`--bg-url: url('\${link}')\`: ''">
         <h1 class="meetup-cover__title">{{ title ? title : 'Название митапа' }}</h1>
     </div>`,
 
@@ -15,8 +15,7 @@ export const MeetupCover = {
     },
   },
   /*computed: {
- //--bg-url: url('https://course-vue.javascript.ru/api/images/2')
-    styleBg() {
+     styleBg() {
       const url = this.link
         ? this.link
         : '';
