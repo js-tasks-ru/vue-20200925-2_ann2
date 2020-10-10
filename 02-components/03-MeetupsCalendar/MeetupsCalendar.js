@@ -18,9 +18,9 @@ export const MeetupsCalendar = {
         <div class="rangepicker__cell rangepicker__cell_inactive" v-for="day in lastMonthDays">
           {{day}}
         </div>
-        <div class="rangepicker__cell" v-for="day in getArrMonth.arrMonthISO">
+        <div class="rangepicker__cell" v-for="day in getArrMonth.arrMonthString">
           {{new Date(day).getDate()}}
-          <a class="rangepicker__event" v-for="[item, title] in getMeetupsArr" v-if="day === item">
+          <a class="rangepicker__event" v-for="[item, title] in getArrMonth.meetupDay[day]">
             {{title}}
           </a>
         </div>
@@ -88,17 +88,25 @@ export const MeetupsCalendar = {
       ).getDate();
 
       const arrMonth = Array.from({ length: lastDayMonth }, (day, i) => i + 1);
-      const arrMonthISO = [];
+      const arrMonthString = [];
+      const meetupDay = {};
+
       arrMonth.forEach((day) => {
-        day = new Date(this.currentYear, this.date.getMonth(), day + 1)
-          .toISOString()
-          .substr(0, 10);
-        arrMonthISO.push(day);
+        day = new Date(
+          this.currentYear,
+          this.date.getMonth(),
+          day,
+        ).toDateString();
+        arrMonthString.push(day);
+        meetupDay[day] = this.getMeetupsArr.filter(([item]) => {
+          return item === day;
+        });
       });
 
       return {
-        arrMonthISO,
+        arrMonthString,
         arrMonth,
+        meetupDay,
       };
     },
 
@@ -118,7 +126,10 @@ export const MeetupsCalendar = {
           this.currentYear,
           this.date.getMonth(),
           this.getArrMonth.arrMonth.length,
-        ).getDay() + 6) % 7);
+        ).getDay() +
+          6) %
+        7
+      );
     },
 
     nextMonthDays() {
@@ -134,7 +145,7 @@ export const MeetupsCalendar = {
     getMeetupsArr() {
       const meetupDays = [];
       this.meetups.map((item) => {
-        const meetupDay = new Date(item.date).toISOString().substr(0, 10);
+        const meetupDay = new Date(item.date).toDateString();
         const title = item.title;
         meetupDays.push([meetupDay, title]);
       });
