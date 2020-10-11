@@ -29,7 +29,6 @@
     "vue": "^2.6.12",
     "vue-jest": "^3.0.7",
     "vue-router": "^3.4.4",
-    "vue-template-compiler": "^2.6.12",
     "vuex": "^3.5.1"
   },
   "devDependencies": {
@@ -41,6 +40,8 @@
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-vue": "^6.2.2",
     "prettier": "^2.1.2",
+    "vue-loader": "^15.9.3",
+    "vue-template-compiler": "^2.6.12",
     "yaml": "^1.10.0"
   },
   "babel": {
