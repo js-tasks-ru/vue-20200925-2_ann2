@@ -194,3 +194,5 @@ tmp/
 temp/
 
 # End of https://www.gitignore.io/api/node,jetbrains+all
+package.json
+package-lock.json
