@@ -19,8 +19,7 @@
         :key="item.value"
         @click="changeValue(item)"
         class="dropdown__item"
-        type="button" v-for="item in options"
-      >
+        type="button" v-for="item in options">
         <app-icon v-if="item.icon" :icon="item.icon" />
         {{ item.text }}
       </button>
