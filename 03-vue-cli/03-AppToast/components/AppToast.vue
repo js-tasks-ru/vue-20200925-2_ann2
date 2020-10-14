@@ -54,31 +54,6 @@ export default {
 
 
 };
-
-
-/*error(message) {
-      const count = this.toasts.push({
-        message,
-        icon: 'alert-circle',
-        class: 'toast toast_error',
-        show: true
-      });
-      setTimeout(() => {
-        this.toasts[count-1].show = false;
-      }, DELAY);
-    },
-    success(message) {
-      const count = this.toasts.push({
-        message,
-        icon: 'check-circle',
-        class: 'toast toast_success',
-        show: true
-      });
-      setTimeout(() => {
-        this.toasts[count-1].show = false;
-      }, DELAY);
-    },
-  },*/
 </script>
 
 <style scoped>
