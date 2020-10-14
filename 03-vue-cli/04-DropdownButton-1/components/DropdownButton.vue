@@ -1,25 +1,27 @@
 <template>
-  <div class="dropdown" :class="{ show: this.show }" @click="toggleShow">
+  <div class="dropdown" :class="{ show: show }" @click="toggleShow">
     <button
       type="button"
       class="button dropdown__toggle"
-      :class="{ dropdown__toggle_icon: checkIcon() }"
+      :class="{ dropdown__toggle_icon: checkIcon }"
     >
-      <app-icon :icon="setAction(value).icon" v-if="setAction(value).icon" />
-      {{ title }} {{ setAction(value).text }}
+      <app-icon :icon="setAction.icon" v-if="setAction.icon" />
+      {{ title }} {{ setAction.text }}
     </button>
 
     <div
       class="dropdown__menu"
-      :class="{ show: this.show }"
+      :class="{ show: show }"
       @click="toggleShow"
     >
       <button
-        :class="{ dropdown__item_icon: checkIcon() }"
+        :class="{ dropdown__item_icon: checkIcon }"
         :key="item.value"
         @click="changeValue(item)"
         class="dropdown__item"
-        type="button" v-for="item in options">
+        type="button"
+        v-for="item in options"
+      >
         <app-icon v-if="item.icon" :icon="item.icon" />
         {{ item.text }}
       </button>
@@ -29,6 +31,7 @@
 
 <script>
 //Не мешало бы на кнопку Set registration при клике дабавить функцию, чтобы закрывались все дродауны.
+//Ну и при открытии одного списка, чтоб другие закрывались.
 import AppIcon from './AppIcon';
 
 export default {
@@ -58,6 +61,21 @@ export default {
     event: 'change',
   },
 
+  computed: {
+    checkIcon: function () {
+      return this.options.some((item) => item.icon);
+    },
+
+    setAction: function () {
+      const textAction = {};
+      if (this.value) {
+        const opt = this.options.find((item) => item['value'] === this.value);
+        textAction.text = `- ${opt.text}`;
+        textAction.icon = opt.icon;
+      }
+      return textAction;
+    },
+  },
   methods: {
     changeValue(item) {
       this.toggleShow();
@@ -66,19 +84,6 @@ export default {
     },
     toggleShow() {
       this.show = !this.show;
-    },
-    setAction(value) {
-      let textAction = {};
-      this.options.forEach(function (item) {
-        if (item['value'] === value) {
-          textAction.text = `- ${item.text}`;
-          textAction.icon = item.icon;
-        }
-      });
-      return textAction;
-    },
-    checkIcon: function () {
-      return this.options.some((item) => item.icon);
     },
   },
 };
