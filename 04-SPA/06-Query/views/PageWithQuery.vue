@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <meetups-view v-model="modelQuery"
+    <meetups-view
       :view.sync="def.view"
       :search.sync="def.search"
       :date.sync="def.date"
@@ -11,7 +11,7 @@
       @update:participation="gotoView"
     ></meetups-view>
 
-    {{ $route.query }}
+    {{ $route.query }} {{routQuery}}
   </div>
 </template>
 
@@ -36,7 +36,7 @@ export default {
   },
 
   watch: {
-    modelQuery: {
+    /* modelQuery: {
       get: function () {
         return this.value;
       },
@@ -44,7 +44,7 @@ export default {
         this.$route.query = value;
         console.log(value);
       }
-    },
+    },*/
     /*routQuery: function (value, oldvalue) {
 
 
@@ -52,8 +52,7 @@ export default {
       console.log(value, oldvalue, this.keyQuery, 'wath');
 
     },*/
-
-   /* view: function () {
+    /* view: function () {
       this.keyQuery = 'view';
     },
     date: function () {
@@ -80,78 +79,30 @@ export default {
     }*/
   },
   methods: {
-    clearQuery([key]) {
-      const query = this.$route.query;
-      console.log(query, [key], 2);
+    gotoView: function () {
+      //console.log(value, cloneDef.view, 'mme');
+      const queryObj = {};
 
-      delete query[key];
-
-      console.log(query, this.$route.query, 3);
-    },
-    gotoView: function (value) {
-      //this[`${value}`] = value;
-      console.log(value, cloneDef.view, 'mme');
       for (let [key, query] of Object.entries(this.def)) {
-
-
-        //console.log(query, value, 'query');
-        /*if (value === cloneDef[key]) {
-          console.log(this.$route.query, 'key');
-          this.$router
-            .push({
-              path: '',
-              query: { ...this.$route.query, [key]: value },
-            })
-            .catch((err) => {
-              if (err.name !== 'NavigationDuplicated') {
-                throw err;
-              }
-            });
-        }*/
-        if (query === value) {
-          this.$router
-            .replace({
-              path: '',
-              query: { ...this.$route.query, [key]: value },
-            })
-            .catch((err) => {
-              if (err.name !== 'NavigationDuplicated') {
-                throw err;
-              }
-            });
-          //console.log(key);
+        //console.log(key, query, 'item');
+        if (query !== cloneDef[key]) {
+          queryObj[key] = query;
+          console.log(queryObj);
+        } else {
+          console.log(key, 'key');
         }
-        /*if (value === cloneDef[key]) {
-          this.$router
-            .push({
-              path: '',
-              query: { ...this.$route.query},
-            })
-            .catch((err) => {
-              if (err.name !== 'NavigationDuplicated') {
-                throw err;
-              }
-            });
-        }*/
-        if (value === cloneDef[key]) {
-          console.log([key, query], '1');
 
-          this.clearQuery([key]);
-
-        }
+        this.$router
+          .replace({
+            path: '',
+            query: queryObj,
+          })
+          .catch((err) => {
+            if (err.name !== 'NavigationDuplicated') {
+              throw err;
+            }
+          });
       }
-      //this.view = value;
-      //this.search = value;
-      //const [key] = Object.keys(this.$route.query);
-      //console.log(key, this.$route.query);
-      //let objQuery = Object.assign(this.$route.query, { keyQuery: value });
-
-      console.log(this.$route.query, 'ff');
-      //if (this.keyQuery[value] === value) {
-        //console.log(this.keyQuery[value], 'ff')
-
-      //}
-
     },
   },
 };
