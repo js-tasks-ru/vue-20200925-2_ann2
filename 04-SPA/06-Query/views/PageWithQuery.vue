@@ -1,108 +1,86 @@
+<!-- Использование метода replace не оставит записи в истории переходов,
+ т.к. по сути тут это без надобности. Ну и в тестах используется этот метод, что добавило еще один плюс к нему :)-->
+
 <template>
   <div class="container">
-    <meetups-view
-      :view.sync="def.view"
-      :search.sync="def.search"
-      :date.sync="def.date"
-      :participation.sync="def.participation"
-      @update:search="gotoView"
-      @update:date="gotoView"
-      @update:view="gotoView"
-      @update:participation="gotoView"
+     <meetups-view
+      :view.sync="current.view"
+      :search.sync="current.search"
+      :date.sync="current.date"
+      :participation.sync="current.participation"
     ></meetups-view>
 
-    {{ $route.query }} {{routQuery}}
   </div>
 </template>
 
 <script>
 import MeetupsView from '../components/MeetupsView';
-const def = {
+const current = {
   view: 'list',
   date: 'all',
   participation: 'all',
   search: '',
 };
-const cloneDef = Object.assign({}, def);
+const cloneDef = Object.assign({}, current);
 export default {
   name: 'PageWithQuery',
   components: { MeetupsView },
   data() {
     return {
-      def,
-      keyQuery: '',
-      modelQuery: def,
+      current,
     };
   },
 
   watch: {
-    /* modelQuery: {
-      get: function () {
-        return this.value;
+    routerParams: {
+      handler: function (newValue) {
+        const tempCurrent = {};
+        //почему нельзя использовать this.current внутри цикла?
+        Object.keys(this.current).forEach(function (key) {
+          tempCurrent[key] = newValue[key] || cloneDef[key];
+        });
+        this.current = tempCurrent;
       },
-      set: function (value) {
-        this.$route.query = value;
-        console.log(value);
-      }
-    },*/
-    /*routQuery: function (value, oldvalue) {
-
-
-
-      console.log(value, oldvalue, this.keyQuery, 'wath');
-
-    },*/
-    /* view: function () {
-      this.keyQuery = 'view';
+      immediate: true,
     },
-    date: function () {
-      this.keyQuery = 'date';
 
-      //this.view = newv;
+    'current.view': function () {
+      this.addQuery();
     },
-    participation: function () {
-      this.keyQuery = 'participation';
-      return this.keyQuery;
+    'current.date': function () {
+      this.addQuery();
     },
-    search: function () {
-      this.keyQuery = 'search';
-    },*/
+    'current.participation': function () {
+      this.addQuery();
+    },
+    'current.search': function () {
+      this.addQuery();
+    },
   },
   computed: {
-    routQuery() {
-      console.log(this.$route.query, 'cc');
+    routerParams: function () {
       return this.$route.query;
     },
-    /*getKeyQuery: {
-
-
-    }*/
   },
+
   methods: {
-    gotoView: function () {
-      //console.log(value, cloneDef.view, 'mme');
+    addQuery: function () {
       const queryObj = {};
-
-      for (let [key, query] of Object.entries(this.def)) {
-        //console.log(key, query, 'item');
-        if (query !== cloneDef[key]) {
-          queryObj[key] = query;
-          console.log(queryObj);
-        } else {
-          console.log(key, 'key');
+      Object.entries(this.current).forEach(function ([k, v]) {
+        if (v !== cloneDef[k]) {
+          queryObj[k] = v;
         }
+      });
 
-        this.$router
-          .replace({
-            path: '',
-            query: queryObj,
-          })
-          .catch((err) => {
-            if (err.name !== 'NavigationDuplicated') {
-              throw err;
-            }
-          });
-      }
+      this.$router
+        .replace({
+          query: queryObj,
+        })
+        .catch((err) => {
+          if (err.name !== 'NavigationDuplicated') {
+            throw err;
+          }
+        });
     },
   },
 };
