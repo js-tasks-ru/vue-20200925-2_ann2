@@ -1,10 +1,15 @@
 <template>
-  <button></button>
+  <base-button class="button_danger" v-bind="$attrs" v-on="$listeners">
+    <slot></slot>
+  </base-button>
 </template>
 
 <script>
+import BaseButton from './BaseButton';
+
 export default {
   name: 'DangerButton',
+  components: { BaseButton },
 };
 </script>
 
@@ -14,8 +19,8 @@ export default {
   border-color: var(--red);
   color: var(--red);
 }
-
-.button_danger:hover {
-  border-color: var(--red-light);
+.button.button_block {
+  display: block;
+  width: 100%;
 }
 </style>
