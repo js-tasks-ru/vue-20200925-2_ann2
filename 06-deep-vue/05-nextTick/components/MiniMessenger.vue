@@ -1,7 +1,7 @@
 <template>
   <main>
-    <messages-list class="messages" :messages="messages" />
-    <form @submit.prevent="send" style="display: flex;">
+    <messages-list class="messages" ref="messages-list" :messages="messages" />
+    <form @submit.prevent="send" style="display: flex">
       <input type="text" placeholder="New message" v-model="newMessage" />
       <button>Send</button>
     </form>
@@ -32,11 +32,19 @@ export default {
 
   methods: {
     send() {
-      this.messages.push({
-        id: id++,
-        text: this.newMessage,
-      });
+      //не будем постить пустые сообщения
+      if (this.newMessage.length) {
+        this.messages.push({
+          id: id++,
+          text: this.newMessage,
+        });
+        this.updateMessage();
+      }
       this.newMessage = '';
+    },
+    updateMessage: async function () {
+      await this.$nextTick();
+      this.$el.children[0].scrollTop = this.$el.children[0].scrollHeight;
     },
   },
 };
