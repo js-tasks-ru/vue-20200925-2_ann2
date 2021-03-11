@@ -1,4 +1,8 @@
-<template></template>
+<template>
+  <transition v-bind="$attrs" v-on="$listeners" name="fade" mode="out-in">
+    <slot />
+  </transition>
+</template>
 
 <script>
 export default {
@@ -6,7 +10,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.2s ease-in-out;
