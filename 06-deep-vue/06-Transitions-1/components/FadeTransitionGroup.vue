@@ -1,9 +1,5 @@
 <template>
-  <transition-group
-    v-bind="$attrs"
-    v-on="$listeners"
-    name="fade-list"
-  >
+  <transition-group v-bind="$attrs" v-on="$listeners" name="fade-list">
     <slot />
   </transition-group>
 </template>
