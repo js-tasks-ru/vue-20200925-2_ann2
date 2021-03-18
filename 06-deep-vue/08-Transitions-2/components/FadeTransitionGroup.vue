@@ -1,6 +1,55 @@
 <script>
+function cloneVNode(vnode) {
+  const VNode = vnode.__proto__.constructor;
+  const cloned = new VNode(
+    vnode.tag,
+    vnode.data,
+    // #7975
+    // clone children array to avoid mutating original in case of cloning
+    // a child.
+    vnode.children && vnode.children.slice(),
+    vnode.text,
+    vnode.elm,
+    vnode.context,
+    vnode.componentOptions,
+    vnode.asyncFactory,
+  );
+  cloned.ns = vnode.ns;
+  cloned.isStatic = vnode.isStatic;
+  cloned.key = vnode.key;
+  cloned.isComment = vnode.isComment;
+  cloned.fnContext = vnode.fnContext;
+  cloned.fnOptions = vnode.fnOptions;
+  cloned.fnScopeId = vnode.fnScopeId;
+  cloned.asyncMeta = vnode.asyncMeta;
+  cloned.isCloned = true;
+  return cloned;
+}
 export default {
   name: 'FadeTransitionGroup',
+  render(createElement) {
+    let renderArr = [];
+    if (this.$slots.default) {
+      renderArr = this.$slots.default.map(function (slot) {
+        const cloneN = cloneVNode(slot);
+        if (Object.prototype.hasOwnProperty.call(cloneN.data, 'staticClass')) {
+          cloneN.data.staticClass += ' fade-list-item';
+        } else {
+          cloneN.data.staticClass = 'fade-list-item';
+        }
+        return cloneN;
+      });
+    }
+
+    return createElement(
+      'transition-group',
+      {
+        attrs: { ...this.$attrs, name: 'fade-list', class: 'fade-list' },
+        on: this.$listeners,
+      },
+      renderArr,
+    );
+  },
 };
 </script>
 
