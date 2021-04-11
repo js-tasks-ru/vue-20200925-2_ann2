@@ -3,23 +3,40 @@
     <div class="rangepicker__calendar">
       <div class="rangepicker__month-indicator">
         <div class="rangepicker__selector-controls">
-          <button class="rangepicker__selector-control-left"></button>
-          <div>Январь 2021</div>
-          <button class="rangepicker__selector-control-right"></button>
+          <button
+            class="rangepicker__selector-control-left"
+            @click="prev"
+          ></button>
+          <div>{{ getLocaleMonthYear }}</div>
+          <button
+            class="rangepicker__selector-control-right"
+            @click="next"
+          ></button>
         </div>
       </div>
       <div class="rangepicker__date-grid">
-        <div class="rangepicker__cell rangepicker__cell_inactive">28</div>
-        <div class="rangepicker__cell rangepicker__cell_inactive">29</div>
-        <div class="rangepicker__cell rangepicker__cell_inactive">30</div>
-        <div class="rangepicker__cell rangepicker__cell_inactive">31</div>
-        <div class="rangepicker__cell">
-          1
-          <a class="rangepicker__event">Митап</a>
-          <a class="rangepicker__event">Митап</a>
+        <div
+          class="rangepicker__cell rangepicker__cell_inactive"
+          v-for="day in lastMonthDays"
+          :key="day"
+        >
+          {{ day }}
         </div>
-        <div class="rangepicker__cell">2</div>
-        <div class="rangepicker__cell">3</div>
+        <div
+          class="rangepicker__cell"
+          v-for="day in getArrMonth.arrMonthString"
+          :key="day"
+        >
+          {{ new Date(day).getDate() }}
+          <slot :day="day"></slot>
+        </div>
+        <div
+          class="rangepicker__cell rangepicker__cell_inactive"
+          v-for="day in nextMonthDays"
+          :key="day"
+        >
+          {{ day }}
+        </div>
       </div>
     </div>
   </div>
@@ -28,6 +45,113 @@
 <script>
 export default {
   name: 'CalendarView',
+
+  data() {
+    return {
+      date: new Date(),
+    };
+  },
+  computed: {
+    currentYear() {
+      return this.date.getFullYear();
+    },
+    //текущий месяц
+    getLocaleMonthYear() {
+      return `${this.date.toLocaleString(navigator.language, {
+        month: 'long',
+      })} ${this.date.getFullYear()}`;
+    },
+
+    //последние дни предыдущего месяца
+    lastMonthDays() {
+      const arrLastMonth = [];
+      const lastDays = new Date(
+        this.currentYear,
+        this.date.getMonth(),
+        0,
+      ).getDate();
+      if (this.getDayWeekFirstDay > 0) {
+        for (
+          let i = lastDays - this.getDayWeekFirstDay + 1;
+          i <= lastDays;
+          i++
+        ) {
+          arrLastMonth.push(i);
+        }
+      }
+      return arrLastMonth;
+    },
+
+    getArrMonth: function () {
+      //последний день текущего месяца
+      let lastDayMonth = new Date(
+        this.currentYear,
+        this.date.getMonth() + 1,
+        0,
+      ).getDate();
+
+      const arrMonth = Array.from({ length: lastDayMonth }, (day, i) => i + 1);
+      const arrMonthString = [];
+
+      arrMonth.forEach((day) => {
+        day = new Date(
+          this.currentYear,
+          this.date.getMonth(),
+          day,
+        ).toDateString();
+        arrMonthString.push(day);
+      });
+
+      return {
+        arrMonthString,
+        arrMonth,
+      };
+    },
+
+    //индекс дня недели первого дня месяца
+    getDayWeekFirstDay() {
+      //local week
+      return (
+        (new Date(this.currentYear, this.date.getMonth(), 1).getDay() + 6) % 7
+      );
+    },
+
+    //индекс дня недели последнего дня месяца
+    getDayWeekLastDay() {
+      //local week
+      return (
+        (new Date(
+          this.currentYear,
+          this.date.getMonth(),
+          this.getArrMonth.arrMonth.length,
+        ).getDay() +
+          6) %
+        7
+      );
+    },
+
+    nextMonthDays() {
+      const nextDaysMonth = [];
+      if (this.getDayWeekLastDay < 6) {
+        for (let i = 1; i <= 6 - this.getDayWeekLastDay; i++) {
+          nextDaysMonth.push(i);
+        }
+      }
+      return nextDaysMonth;
+    },
+
+    first() {
+      return new Date(this.currentYear, this.date.getMonth(), 1);
+    },
+  },
+  methods: {
+    prev() {
+      this.date = new Date(this.first.setMonth(this.first.getMonth() - 1));
+    },
+    next() {
+      this.date = new Date(this.first.setMonth(this.first.getMonth() + 1));
+    },
+  },
 };
 </script>
 
