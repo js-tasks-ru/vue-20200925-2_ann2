@@ -1,25 +1,54 @@
 <template>
-  <renderless-calendar class="rangepicker">
+  <renderless-calendar
+    class="rangepicker"
+    v-slot="{
+      currentYear,
+      getLocaleMonthYear,
+      lastDaysMonth,
+      getArrMonth,
+      nextDaysMonth,
+      prev,
+      next,
+    }"
+    :custom-date="customDate"
+  >
     <div class="rangepicker__calendar">
       <div class="rangepicker__month-indicator">
         <div class="rangepicker__selector-controls">
-          <button class="rangepicker__selector-control-left"></button>
-          <div>Январь 2021</div>
-          <button class="rangepicker__selector-control-right"></button>
+          <button
+            class="rangepicker__selector-control-left"
+            @click="prev"
+          ></button>
+          <div>{{ getLocaleMonthYear }}</div>
+          <button
+            class="rangepicker__selector-control-right"
+            @click="next"
+          ></button>
         </div>
       </div>
       <div class="rangepicker__date-grid">
-        <div class="rangepicker__cell rangepicker__cell_inactive">28</div>
-        <div class="rangepicker__cell rangepicker__cell_inactive">29</div>
-        <div class="rangepicker__cell rangepicker__cell_inactive">30</div>
-        <div class="rangepicker__cell rangepicker__cell_inactive">31</div>
-        <div class="rangepicker__cell">
-          1
-          <a class="rangepicker__event">Митап</a>
-          <a class="rangepicker__event">Митап</a>
+        <div
+          class="rangepicker__cell rangepicker__cell_inactive"
+          v-for="day in lastDaysMonth"
+          :key="day"
+        >
+          {{ day }}
         </div>
-        <div class="rangepicker__cell">2</div>
-        <div class="rangepicker__cell">3</div>
+        <div
+          class="rangepicker__cell"
+          v-for="day in getArrMonth.arrMonthString"
+          :key="day"
+        >
+          {{ new Date(day).getDate() }}
+          <slot :day="day"></slot>
+        </div>
+        <div
+          class="rangepicker__cell rangepicker__cell_inactive"
+          v-for="day in nextDaysMonth"
+          :key="day"
+        >
+          {{ day }}
+        </div>
       </div>
     </div>
   </renderless-calendar>
@@ -32,6 +61,12 @@ export default {
   name: 'CalendarView',
 
   components: { RenderlessCalendar },
+  props: {
+    customDate: {
+      type: Date,
+      default: () => new Date(),
+    },
+  },
 };
 </script>
 
